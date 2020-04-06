@@ -5,6 +5,7 @@
 
 #include "World.h"
 #include "VizPlayerMain.h"
+#include "VizPlayerMenu.h"
 
 class VizScene : public cocos2d::Scene
 {
@@ -26,8 +27,6 @@ private:
     
     //地图
     cocos2d::TMXTiledMap* m_map;
-    int m_mapTileW;
-    int m_mapTileH;
     void MoveMap(int dX, int dY);
     bool m_isMapMoving;
     bool m_isMovingU;
@@ -40,7 +39,7 @@ private:
     int m_mapCacheHalfW;
     int m_mapCacheHalfH;
     
-    //
+    //玩家数据
     VizPlayerMain m_mainPlayer;
     
     //按键响应
@@ -52,6 +51,10 @@ private:
     
     //刷新画面
     void update(float);
+    
+    //玩家菜单
+    VizPlayerMenu m_playerMenu;
+    
 };
 
 #endif // VIZSCENE_H

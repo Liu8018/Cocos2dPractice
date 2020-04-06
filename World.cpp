@@ -95,11 +95,13 @@ std::string World::getLocalMap(int halfW, int halfH)
             int limitX,limitY;
             getLimitIndex(m_w,m_h,x,y,limitX,limitY);
             
+            /*
             //debug
             if(limitX == m_playerPosX && limitY == m_playerPosY){
                 tileIdVec.push_back(7);
                 continue;
             }
+            */
             
             tileIdVec.push_back(m_atlas[limitY][limitX]);
         }

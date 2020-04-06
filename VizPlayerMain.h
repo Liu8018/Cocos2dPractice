@@ -3,6 +3,9 @@
 
 #include "cocos2d.h"
 
+//#include <vector>
+//#include <inttypes.h>
+
 class VizPlayerMain
 {
 public:
@@ -26,6 +29,9 @@ private:
     //
     cocos2d::SpriteFrame* m_statFrameL;
     cocos2d::SpriteFrame* m_statFrameR;
+    
+    //背包
+    std::vector<std::pair<std::uint16_t,std::uint8_t>> m_bag;
 };
 
 #endif // VIZPLAYERMAIN_H

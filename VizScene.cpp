@@ -1,6 +1,8 @@
 #include "VizScene.h"
 #include "globals.h"
 
+#include <ui/CocosGUI.h>
+
 USING_NS_CC;
 
 Scene* VizScene::createScene()
@@ -20,14 +22,13 @@ bool VizScene::init()
     //原点坐标
     m_origin = Director::getInstance()->getVisibleOrigin();
     
-    //玩家图像
-    m_mainPlayer.getSprite()->setPosition(m_origin.x+m_vizSize.width/2,m_origin.y+m_vizSize.height/2+m_mapTileH/2);
-    addChild(m_mainPlayer.getSprite(),2);
-    
     //地图相关
     m_mapCacheHalfW = 48;
     m_mapCacheHalfH = 36;
     loadMap();
+    
+    //玩家图像
+    addChild(m_mainPlayer.getSprite(),2);
     
     //行走相关
     m_isMapMoving = false;
@@ -41,6 +42,9 @@ bool VizScene::init()
     keyBoardListener->onKeyPressed = CC_CALLBACK_2(VizScene::onKeyPressed, this);
     keyBoardListener->onKeyReleased = CC_CALLBACK_2(VizScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyBoardListener, this);
+    
+    //玩家菜单
+    addChild(m_playerMenu.getMenu(),99);
     
     //定时器-刷新世界信息
     //schedule(CC_SCHEDULE_SELECTOR(TestScene::updateWorldData),m_turnTimeLen);
@@ -61,11 +65,11 @@ void VizScene::loadMap()
     //从world载入map
     m_map = TMXTiledMap::createWithXML(m_world.getLocalMap(m_mapCacheHalfW,m_mapCacheHalfH),"res");
     m_map->setScale(Director::getInstance()->getContentScaleFactor());
-    m_mapTileW = m_map->getTileSize().width;
-    m_mapTileH = m_map->getTileSize().height;
+    g_mapTileW = m_map->getTileSize().width;
+    g_mapTileH = m_map->getTileSize().height;
     //把人物位置放在视图中心
-    m_map->setPositionX(m_origin.x-m_map->getMapSize().width*m_mapTileW/2+m_vizSize.width/2);
-    m_map->setPositionY(m_origin.y-m_map->getMapSize().height*m_mapTileH/2+m_vizSize.height/2);
+    m_map->setPositionX(m_origin.x-m_map->getMapSize().width*g_mapTileW/2+m_vizSize.width/2);
+    m_map->setPositionY(m_origin.y-m_map->getMapSize().height*g_mapTileH/2+m_vizSize.height/2);
     
     addChild(m_map,0);
 }
@@ -77,8 +81,8 @@ bool VizScene::isTimeToLoadMap()
     int diffL = 0;
     int diffR = 0;
     
-    int cacheW = m_vizSize.width/4;
-    int cacheH = m_vizSize.height/4;
+    int cacheW = m_vizSize.width/8;
+    int cacheH = m_vizSize.height/8;
     
     int mapH = m_map->getMapSize().height*m_map->getTileSize().height;
     int mapW = m_map->getMapSize().width*m_map->getTileSize().width;
@@ -115,10 +119,10 @@ void VizScene::MoveMap(int dX, int dY)
     m_mainPlayer.walk(-dX);
     
     //播放地图移动动画
-    int preBlockX = (m_map->getPositionX()+m_mapTileW/2)/m_mapTileW;
-    int preBlockY = (m_map->getPositionY()+m_mapTileH/2)/m_mapTileH;
-    int nextBlockX = (preBlockX+dX)*m_mapTileW-m_mapTileW/2;
-    int nextBlockY = (preBlockY+dY)*m_mapTileH-m_mapTileH/2;
+    int preBlockX = (m_map->getPositionX()+g_mapTileW/2)/g_mapTileW;
+    int preBlockY = (m_map->getPositionY()+g_mapTileH/2)/g_mapTileH;
+    int nextBlockX = (preBlockX+dX)*g_mapTileW-g_mapTileW/2;
+    int nextBlockY = (preBlockY+dY)*g_mapTileH-g_mapTileH/2;
     MoveTo* move = MoveTo::create(g_turnTimeLen,Vec2(nextBlockX,nextBlockY));
     m_map->runAction(Sequence::create(move,CallFunc::create(([this]() { 
         m_isMapMoving = false; 

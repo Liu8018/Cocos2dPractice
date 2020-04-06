@@ -1,7 +1,7 @@
 #include "AppDelegate.h"
 
 #include "VizScene.h"
-//#include "HelloWorldScene.h"
+#include "globals.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -87,6 +87,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = VizScene::createScene();
+    g_vizScene = scene;
 
     // run
     director->runWithScene(scene);

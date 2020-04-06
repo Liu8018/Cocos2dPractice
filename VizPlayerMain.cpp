@@ -36,6 +36,11 @@ VizPlayerMain::VizPlayerMain()
     framesWalkR.pushBack(m_statFrameR);
     auto animationWalkR = Animation::createWithSpriteFrames(framesWalkR, g_turnTimeLen/9);
     AnimationCache::getInstance()->addAnimation(animationWalkR, "mainPlayerWalkR");
+    
+    //放置
+    auto vizSize = Director::getInstance()->getVisibleSize();
+    auto origin = Director::getInstance()->getVisibleOrigin();
+    m_sprite->setPosition(origin.x+vizSize.width/2,origin.y+vizSize.height/2+g_mapTileH/1.8);
 }
 
 SpriteFrame* VizPlayerMain::getStatFrame(bool side)
