@@ -1,4 +1,5 @@
 #include "VizItem.h"
+#include "globals.h"
 
 #include <fstream>
 
@@ -40,7 +41,7 @@ void loadItemTable(std::string path,
 VizItem::VizItem()
 {
     //这里应该根据itemList加载所有item到内存
-    loadItemTable("res/items/itemTable.csv",m_itemTable);
+    loadItemTable(g_txt_itemTable,m_itemTable);
 }
 
 cocos2d::SpriteFrame* VizItem::getItemFrame(int itemId)

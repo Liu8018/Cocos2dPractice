@@ -6,7 +6,7 @@ USING_NS_CC;
 VizPlayerMain::VizPlayerMain()
 {
     //读入图像资源集
-    Texture2D* texture = Director::getInstance()->getTextureCache()->addImage("res/sprite1.png");
+    Texture2D* texture = Director::getInstance()->getTextureCache()->addImage(g_imgSet_sprite1);
     
     //获取左右帧
     m_statFrameL = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0,64,64,64)));

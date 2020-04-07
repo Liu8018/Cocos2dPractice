@@ -63,7 +63,7 @@ void VizScene::loadMap()
     }
     
     //从world载入map
-    m_map = TMXTiledMap::createWithXML(m_world.getLocalMap(m_mapCacheHalfW,m_mapCacheHalfH),"res");
+    m_map = TMXTiledMap::createWithXML(m_world.getLocalMap(m_mapCacheHalfW,m_mapCacheHalfH),g_dir_mapRes);
     m_map->setScale(Director::getInstance()->getContentScaleFactor());
     g_mapTileW = m_map->getTileSize().width;
     g_mapTileH = m_map->getTileSize().height;

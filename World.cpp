@@ -62,7 +62,7 @@ void getLimitIndex(int limitW, int limitH, int infX, int infY, int &limitX, int 
 World::World()
 {
     //加载地形图数据
-    loadAtlas("Resources/res/atlas1.csv",m_w,m_h,m_atlas);
+    loadAtlas("Resources/map/atlas1.csv",m_w,m_h,m_atlas);
     
     //
     m_playerPosX = m_w/2;
