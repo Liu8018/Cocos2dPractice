@@ -1,8 +1,6 @@
 #include "VizPlayerMenu.h"
 #include "globals.h"
 
-#include "ui/CocosGUI.h"
-
 USING_NS_CC;
 
 VizPlayerMenu::VizPlayerMenu()
@@ -11,7 +9,7 @@ VizPlayerMenu::VizPlayerMenu()
     auto origin = Director::getInstance()->getVisibleOrigin();
     
     //
-    m_menu = Menu::create();
+    m_menu = ui::Layout::create();
     m_menu->setPosition(origin);
     
     //menu->菜单图标
@@ -61,7 +59,6 @@ VizPlayerMenu::VizPlayerMenu()
     systemSettingButton->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::showSystemUI, this));
     menuBg->addChild(systemSettingButton,0,"systemSettingButton");
     
-    
     //menu->背景->人物界面
     loadPlayerInfoUI();
     
@@ -77,7 +74,7 @@ VizPlayerMenu::VizPlayerMenu()
 void VizPlayerMenu::loadPlayerInfoUI()
 {
     //人物信息子菜单
-    m_subMenu_playerInfo = Menu::create();
+    m_subMenu_playerInfo = ui::Layout::create();
     m_subMenu_playerInfo->setPosition(Vec2::ZERO);
     
     auto menuBg = m_menu->getChildByName("menuBg");
@@ -87,14 +84,14 @@ void VizPlayerMenu::loadPlayerInfoUI()
 void VizPlayerMenu::loadBackpackUI()
 {
     //背包子菜单
-    m_subMenu_backpack = Menu::create();
+    m_subMenu_backpack = ui::Layout::create();
     m_subMenu_backpack->setPosition(Vec2::ZERO);
     auto menuBg = m_menu->getChildByName("menuBg");
     menuBg->addChild(m_subMenu_backpack);
     
     //物品详情区
     auto itemInfo = ui::ImageView::create(g_img_panel1);
-    m_subMenu_backpack->addChild(itemInfo);
+    m_subMenu_backpack->addChild(itemInfo,0,"itemInfoBg");
     itemInfo->setPosition(Vec2(30,80)+itemInfo->getContentSize()/2);
     
     //"使用"按钮
@@ -112,36 +109,69 @@ void VizPlayerMenu::loadBackpackUI()
     itemDropButton->setTitleText("drop");
     itemDropButton->setTitleFontSize(18);
     itemDropButton->setPosition(Vec2(175,25)+itemDropButton->getContentSize()/2);
+    itemDropButton->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::itemDropClicked, this));
     
     //物品展示区
     auto itemRegion = ui::ImageView::create(g_img_panel2);
     m_subMenu_backpack->addChild(itemRegion);
     itemRegion->setPosition(Vec2(330,80)+itemRegion->getContentSize()/2);
     
-    //下翻页按钮
+    auto equipItemButton = ui::Button::create();
+    m_subMenu_backpack->addChild(equipItemButton);
+    equipItemButton->loadTextures(g_icon_greyButton1,g_icon_greyButton1Sel);
+    equipItemButton->setTitleText("eq");
+    equipItemButton->setTitleFontSize(18);
+    equipItemButton->setPosition(Vec2(345,527)+equipItemButton->getContentSize()/2);
+    
+    auto specialItemButton = ui::Button::create();
+    m_subMenu_backpack->addChild(specialItemButton);
+    specialItemButton->loadTextures(g_icon_greyButton1,g_icon_greyButton1Sel);
+    specialItemButton->setTitleText("sp");
+    specialItemButton->setTitleFontSize(18);
+    specialItemButton->setPosition(Vec2(410,527)+specialItemButton->getContentSize()/2);
+    
+    int itemBoxIntH = (473.733-95)/7;
+    int itemBoxTag = 0;
+    for(int i=0;i<8;i++){
+        for(int j=0;j<3;j++){
+            auto itemBox = ui::Button::create();
+            m_subMenu_backpack->addChild(itemBox,0,itemBoxTag);
+            itemBox->loadTextures(g_img_itemBox,g_img_itemBoxSel,g_img_itemBoxSel);
+            itemBox->setPosition(Vec2(345+j*175,473.733-i*itemBoxIntH)+itemBox->getContentSize()/2);
+            itemBox->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::itemBoxClicked, this));
+            itemBoxTag++;
+        }
+    }
+    
+    m_curPageId = 0;
+    m_maxPageId = 0;
+    
+    //上翻页按钮
     auto sliderLeftButton = ui::Button::create();
     m_subMenu_backpack->addChild(sliderLeftButton);
     sliderLeftButton->loadTextures(g_icon_greySliderLeft,g_icon_greySliderLeftSel);
     sliderLeftButton->setPosition(Vec2(740,35)+sliderLeftButton->getContentSize()/2);
+    sliderLeftButton->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::itemPrevPage, this));
     
-    //上翻页按钮
+    //下翻页按钮
     auto sliderRightButton = ui::Button::create();
     m_subMenu_backpack->addChild(sliderRightButton);
     sliderRightButton->loadTextures(g_icon_greySliderRight,g_icon_greySliderRightSel);
     sliderRightButton->setPosition(Vec2(830,35)+sliderRightButton->getContentSize()/2);
+    sliderRightButton->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::itemNextPage, this));
 }
 
 void VizPlayerMenu::loadSystemUI()
 {
     //系统设置子菜单
-    m_subMenu_system = Menu::create();
+    m_subMenu_system = ui::Layout::create();
     m_subMenu_system->setPosition(Vec2::ZERO);
     
     auto menuBg = m_menu->getChildByName("menuBg");
     menuBg->addChild(m_subMenu_system);
 }
 
-Menu* VizPlayerMenu::getMenu()
+ui::Layout* VizPlayerMenu::getMenu()
 {
     return m_menu;
 }
@@ -174,6 +204,7 @@ void VizPlayerMenu::showPlayerInfoUI(cocos2d::Ref *)
 
 void VizPlayerMenu::showBackpackUI(cocos2d::Ref *)
 {
+    //
     auto menuBg = m_menu->getChildByName("menuBg");
     ((ui::Button*)menuBg->getChildByName("playerInfoButton"))->setEnabled(true);
     ((ui::Button*)menuBg->getChildByName("backpackButton"))->setEnabled(false);
@@ -182,6 +213,36 @@ void VizPlayerMenu::showBackpackUI(cocos2d::Ref *)
     m_subMenu_playerInfo->setVisible(false);
     m_subMenu_backpack->setVisible(true);
     m_subMenu_system->setVisible(false);
+    
+    //
+    m_playerItemList.clear();
+    g_world->getMainPlayerBackpack(m_playerItemList);
+    
+    m_maxPageId = m_playerItemList.size()/24;
+    
+    //
+    updateItemBoxes();
+    
+    //在左侧显示背包第一个物品信息
+    itemBoxClicked(m_subMenu_backpack->getChildByTag(0));
+}
+
+void VizPlayerMenu::updateItemBoxes()
+{
+    log("curPageId:%d",m_curPageId);
+    log("maxPageId:%d",m_maxPageId);
+    for(int i=0;i<24;i++){
+        int itemId = m_curPageId*24+i;
+        if(itemId < m_playerItemList.size()){
+            auto itemBox = (ui::Button*)m_subMenu_backpack->getChildByTag(i);
+            itemBox->setTitleText(std::to_string(m_playerItemList[itemId].first));
+        }
+        else{
+            //清除掉这些box的内容
+            auto itemBox = (ui::Button*)m_subMenu_backpack->getChildByTag(i);
+            itemBox->setTitleText("");
+        }
+    }
 }
 
 void VizPlayerMenu::showSystemUI(cocos2d::Ref *)
@@ -194,4 +255,72 @@ void VizPlayerMenu::showSystemUI(cocos2d::Ref *)
     m_subMenu_playerInfo->setVisible(false);
     m_subMenu_backpack->setVisible(false);
     m_subMenu_system->setVisible(true);
+}
+
+void VizPlayerMenu::itemBoxClicked(cocos2d::Ref *pSender)
+{
+    auto cItemBox = ((ui::Button*)pSender);
+    
+    //点到无物品的栏则返回
+    int itemBoxTag = cItemBox->getTag();
+    int callItemId = itemBoxTag + m_curPageId*24;
+    if(callItemId > m_playerItemList.size()-1)
+        return;
+    
+    m_curItemId = callItemId;
+    
+    //
+    for(int i=0;i<24;i++){
+        auto itemBox = (ui::Button*)m_subMenu_backpack->getChildByTag(i);
+        if(!itemBox->isEnabled())
+            itemBox->setEnabled(true);
+    }
+    cItemBox->setEnabled(false);
+    
+    //在左侧显示物品信息
+    loadItemInfoUI();
+}
+
+void VizPlayerMenu::itemDropClicked(cocos2d::Ref*)
+{
+    g_vizScene->placeItem(m_playerItemList[m_curItemId]);
+}
+
+void VizPlayerMenu::loadItemInfoUI()
+{
+    if(m_curItemSprite != nullptr){
+        m_subMenu_backpack->removeChild(m_curItemSprite,true);
+    }
+    m_curItemSprite = Sprite::createWithSpriteFrame(
+                g_vizItem->getItemFrame(m_playerItemList[m_curItemId].first));
+    m_subMenu_backpack->addChild(m_curItemSprite);
+    m_curItemSprite->setPosition(
+                m_subMenu_backpack->getChildByName("itemInfoBg")->getPosition());
+    
+}
+
+void VizPlayerMenu::itemNextPage(cocos2d::Ref *)
+{
+    m_curPageId++;
+    
+    if(m_curPageId > m_maxPageId){
+        m_curPageId = m_maxPageId;
+        return;
+    }
+    
+    updateItemBoxes();
+    itemBoxClicked(m_subMenu_backpack->getChildByTag(0));
+}
+
+void VizPlayerMenu::itemPrevPage(cocos2d::Ref *)
+{
+    m_curPageId--;
+    
+    if(m_curPageId < 0){
+        m_curPageId = 0;
+        return;
+    }
+    
+    updateItemBoxes();
+    itemBoxClicked(m_subMenu_backpack->getChildByTag(0));
 }

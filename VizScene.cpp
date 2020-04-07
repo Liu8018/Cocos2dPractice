@@ -16,6 +16,11 @@ bool VizScene::init()
     if(!Scene::init())
         return false;
     
+    //
+    g_vizScene = this;
+    g_vizItem = &m_vizItem;
+    g_world = &m_world;
+    
     //窗口尺寸
     m_vizSize = Director::getInstance()->getVisibleSize();
     
@@ -197,4 +202,15 @@ void VizScene::update(float)
 void VizScene::updateWorldData(float)
 {
     
+}
+
+void VizScene::placeItem(std::pair<std::uint16_t, std::uint8_t> item)
+{
+    //从VizItem获取item图像
+    
+    //计算放在map的哪个位置
+    
+    //map增加子节点
+    
+    //更新world信息
 }

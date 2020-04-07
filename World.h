@@ -11,10 +11,9 @@ public:
     
     void playerMove(int dX, int dY);
     
-    int getWidth();
-    int getHeight();
-    
     std::string getLocalMap(int halfW, int halfH);
+    
+    void getMainPlayerBackpack(std::vector<std::pair<std::uint16_t,std::uint8_t>> &itemIdList);
     
 private:
     int m_w;

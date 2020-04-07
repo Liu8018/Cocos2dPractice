@@ -40,11 +40,20 @@ void loadItemTable(std::string path,
 
 VizItem::VizItem()
 {
-    //这里应该根据itemList加载所有item到内存
-    loadItemTable(g_txt_itemTable,m_itemTable);
+    //加载itemTable
+    loadItemTable("Resources/"+g_txt_itemTable,m_itemTable);
+    
+    //应该根据itemId排一下序--------------------------------------------------------------------------------
+    
+    //根据itemTable加载所有item到内存
+    m_itemSpriteList.reserve(m_itemTable.size());
+    for(int i=0;i<m_itemTable.size();i++){
+        std::string itemImgPath = m_itemTable[i][1];
+        m_itemSpriteList.pushBack(Sprite::create(itemImgPath));
+    }
 }
 
 cocos2d::SpriteFrame* VizItem::getItemFrame(int itemId)
 {
-    
+    return m_itemSpriteList.at(itemId)->getSpriteFrame();
 }

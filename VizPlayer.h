@@ -1,15 +1,15 @@
-#ifndef VIZPLAYERMAIN_H
-#define VIZPLAYERMAIN_H
+#ifndef VIZPLAYER_H
+#define VIZPLAYER_H
 
 #include "cocos2d.h"
 
 //#include <vector>
 //#include <inttypes.h>
 
-class VizPlayerMain
+class VizPlayer
 {
 public:
-    VizPlayerMain();
+    VizPlayer();
     
     //返回sprite指针
     cocos2d::Sprite* getSprite();
@@ -19,6 +19,9 @@ public:
     
     //得到图像
     cocos2d::SpriteFrame* getStatFrame(bool);
+    
+    //获取背包物品
+    
     
 private:
     cocos2d::Sprite* m_sprite;
@@ -34,4 +37,4 @@ private:
     std::vector<std::pair<std::uint16_t,std::uint8_t>> m_bag;
 };
 
-#endif // VIZPLAYERMAIN_H
+#endif // VIZPLAYER_H

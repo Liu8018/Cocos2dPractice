@@ -87,7 +87,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = VizScene::createScene();
-    g_vizScene = scene;
 
     // run
     director->runWithScene(scene);

@@ -15,6 +15,10 @@ std::string g_icon_menuClose = "menu/menuClose.png";
 std::string g_icon_menuCloseSel = "menu/menuClose_selected.png";
 std::string g_img_panel1 = "menu/panel1.png";
 std::string g_img_panel2 = "menu/panel2.png";
+std::string g_img_itemBox = "menu/itemBox.png";
+std::string g_img_itemBoxSel = "menu/itemBox_selected.png";
+std::string g_icon_greyButton1 = "menu/greyButton1.png";
+std::string g_icon_greyButton1Sel = "menu/greyButton1_selected.png";
 
 std::string g_imgSet_sprite1 = "player/sprite1.png";
 
@@ -28,4 +32,11 @@ float g_turnTimeLen = 0.2;
 int g_mapTileW = 0;
 int g_mapTileH = 0;
 
-cocos2d::Scene* g_vizScene = nullptr;
+//
+VizScene* g_vizScene = nullptr;
+
+//在VizScene里赋值
+VizItem* g_vizItem = nullptr;
+
+//在VizScene里赋值
+World* g_world = nullptr;

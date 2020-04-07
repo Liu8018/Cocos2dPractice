@@ -133,3 +133,39 @@ std::string World::getLocalMap(int halfW, int halfH)
     
     return tmxString;
 }
+
+void World::getMainPlayerBackpack(std::vector<std::pair<uint16_t, uint8_t> > &itemIdList)
+{
+    itemIdList.push_back(std::make_pair(0,1));
+    itemIdList.push_back(std::make_pair(1,1));
+    itemIdList.push_back(std::make_pair(2,1));
+    itemIdList.push_back(std::make_pair(3,1));
+    itemIdList.push_back(std::make_pair(4,1));
+    itemIdList.push_back(std::make_pair(5,1));
+    itemIdList.push_back(std::make_pair(6,1));
+    itemIdList.push_back(std::make_pair(7,1));
+    itemIdList.push_back(std::make_pair(8,1));
+    itemIdList.push_back(std::make_pair(9,1));
+    itemIdList.push_back(std::make_pair(10,1));
+    itemIdList.push_back(std::make_pair(11,1));
+    itemIdList.push_back(std::make_pair(12,1));
+    itemIdList.push_back(std::make_pair(13,1));
+    itemIdList.push_back(std::make_pair(14,1));
+    itemIdList.push_back(std::make_pair(15,1));
+    itemIdList.push_back(std::make_pair(16,1));
+    itemIdList.push_back(std::make_pair(17,1));
+    itemIdList.push_back(std::make_pair(18,1));
+    itemIdList.push_back(std::make_pair(19,1));
+    itemIdList.push_back(std::make_pair(20,1));
+    itemIdList.push_back(std::make_pair(21,1));
+    itemIdList.push_back(std::make_pair(22,1));
+    itemIdList.push_back(std::make_pair(23,1));
+    itemIdList.push_back(std::make_pair(24,1));
+    itemIdList.push_back(std::make_pair(25,1));
+    itemIdList.push_back(std::make_pair(26,1));
+    itemIdList.push_back(std::make_pair(27,1));
+    itemIdList.push_back(std::make_pair(28,1));
+    itemIdList.push_back(std::make_pair(29,1));
+    itemIdList.push_back(std::make_pair(30,1));
+    itemIdList.push_back(std::make_pair(31,1));
+}

@@ -4,8 +4,9 @@
 #include "cocos2d.h"
 
 #include "World.h"
-#include "VizPlayerMain.h"
+#include "VizPlayer.h"
 #include "VizPlayerMenu.h"
+#include "VizItem.h"
 
 class VizScene : public cocos2d::Scene
 {
@@ -16,6 +17,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(VizScene);
+    
+    //放置item
+    void placeItem(std::pair<std::uint16_t,std::uint8_t> item);
     
 private:
     //
@@ -40,7 +44,7 @@ private:
     int m_mapCacheHalfH;
     
     //玩家数据
-    VizPlayerMain m_mainPlayer;
+    VizPlayer m_mainPlayer;
     
     //按键响应
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
@@ -54,6 +58,9 @@ private:
     
     //玩家菜单
     VizPlayerMenu m_playerMenu;
+    
+    //
+    VizItem m_vizItem;
     
 };
 

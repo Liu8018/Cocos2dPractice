@@ -19,6 +19,10 @@ extern std::string g_icon_menuClose;
 extern std::string g_icon_menuCloseSel;
 extern std::string g_img_panel1;
 extern std::string g_img_panel2;
+extern std::string g_img_itemBox;
+extern std::string g_img_itemBoxSel;
+extern std::string g_icon_greyButton1;
+extern std::string g_icon_greyButton1Sel;
 
 extern std::string g_imgSet_sprite1;
 
@@ -34,6 +38,15 @@ extern int g_mapTileW;
 extern int g_mapTileH;
 
 //主游戏界面VizScene的指针
-extern cocos2d::Scene* g_vizScene;
+#include "VizScene.h"
+extern VizScene* g_vizScene;
+
+//
+#include "VizItem.h"
+extern VizItem* g_vizItem;
+
+//世界信息World的指针
+#include "World.h"
+extern World* g_world;
 
 #endif // GLOBALS_H

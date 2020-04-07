@@ -1,9 +1,9 @@
-#include "VizPlayerMain.h"
+#include "VizPlayer.h"
 #include "globals.h"
 
 USING_NS_CC;
 
-VizPlayerMain::VizPlayerMain()
+VizPlayer::VizPlayer()
 {
     //读入图像资源集
     Texture2D* texture = Director::getInstance()->getTextureCache()->addImage(g_imgSet_sprite1);
@@ -43,7 +43,7 @@ VizPlayerMain::VizPlayerMain()
     m_sprite->setPosition(origin.x+vizSize.width/2,origin.y+vizSize.height/2+g_mapTileH/1.8);
 }
 
-SpriteFrame* VizPlayerMain::getStatFrame(bool side)
+SpriteFrame* VizPlayer::getStatFrame(bool side)
 {
     if(side)
         return m_statFrameR;
@@ -51,12 +51,12 @@ SpriteFrame* VizPlayerMain::getStatFrame(bool side)
         return m_statFrameL;
 }
 
-Sprite* VizPlayerMain::getSprite()
+Sprite* VizPlayer::getSprite()
 {
     return m_sprite;
 }
 
-void VizPlayerMain::walk(int dX)
+void VizPlayer::walk(int dX)
 {
     if(dX > 0)
         m_isLeftStat = false;
