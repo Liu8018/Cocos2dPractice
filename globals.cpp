@@ -28,9 +28,8 @@ std::string g_txt_itemTable = "items/itemTable.csv";
 
 float g_turnTimeLen = 0.2;
 
-//在VizScene的loadMap里赋值
-int g_mapTileW = 0;
-int g_mapTileH = 0;
+int g_mapTileW = 32;
+int g_mapTileH = 32;
 
 //
 VizScene* g_vizScene = nullptr;

@@ -68,15 +68,18 @@ void VizScene::loadMap()
     }
     
     //从world载入map
-    m_map = TMXTiledMap::createWithXML(m_world.getLocalMap(m_mapCacheHalfW,m_mapCacheHalfH),g_dir_mapRes);
+    m_map = TMXTiledMap::createWithXML(m_world.getLocalMapTmx(m_mapCacheHalfW,m_mapCacheHalfH),g_dir_mapRes);
     m_map->setScale(Director::getInstance()->getContentScaleFactor());
-    g_mapTileW = m_map->getTileSize().width;
-    g_mapTileH = m_map->getTileSize().height;
+
     //把人物位置放在视图中心
     m_map->setPositionX(m_origin.x-m_map->getMapSize().width*g_mapTileW/2+m_vizSize.width/2);
     m_map->setPositionY(m_origin.y-m_map->getMapSize().height*g_mapTileH/2+m_vizSize.height/2);
     
     addChild(m_map,0);
+    
+    //更改人物与map的相对坐标
+    m_playerPosX_local = m_mapCacheHalfW+1;
+    m_playerPosY_local = m_mapCacheHalfH+1;
 }
 
 bool VizScene::isTimeToLoadMap()
@@ -136,7 +139,11 @@ void VizScene::MoveMap(int dX, int dY)
     })), nullptr));
     
     //更新world
-    m_world.playerMove(-dX,dY);
+    m_world.playerMove(0,-dX,dY);
+    
+    //更改人物与map的相对坐标
+    m_playerPosX_local += -dX;
+    m_playerPosY_local += -dY;
 }
 
 void VizScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
@@ -206,11 +213,17 @@ void VizScene::updateWorldData(float)
 
 void VizScene::placeItem(std::pair<std::uint16_t, std::uint8_t> item)
 {
+    if(item.second < 1){
+        log("[error] try to place item with 0 num");
+        exit(1);
+    }
+    
     //从VizItem获取item图像
-    
-    //计算放在map的哪个位置
-    
+    auto itemSprite = Sprite::createWithSpriteFrame(g_vizItem->getItemFrame(item.first));
     //map增加子节点
-    
-    //更新world信息
+    m_map->addChild(itemSprite);
+    //计算放在map的哪个位置
+    itemSprite->setPosition(m_playerPosX_local*g_mapTileW-g_mapTileW/2,
+                            m_playerPosY_local*g_mapTileH
+                            +itemSprite->getTextureRect().size.height/2-g_mapTileH);
 }

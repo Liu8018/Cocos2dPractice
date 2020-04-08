@@ -9,11 +9,14 @@ class World
 public:
     World();
     
-    void playerMove(int dX, int dY);
+    void playerMove(int playerId, int dX, int dY);
     
-    std::string getLocalMap(int halfW, int halfH);
+    std::string getLocalMapTmx(int halfW, int halfH);
+    void getPlayerCoordToLocalMap(int &x, int &y);
     
-    void getMainPlayerBackpack(std::vector<std::pair<std::uint16_t,std::uint8_t>> &itemIdList);
+    void getPlayerBackpack(int playerId, std::vector<std::pair<std::uint16_t,std::uint8_t>> &itemIdList);
+    
+    void dropItem(int playerId, int playerItemId, int num);
     
 private:
     int m_w;
@@ -28,7 +31,8 @@ private:
     //全地图的item信息
     unsigned char* m_itemMap;
     
-    //个体
+    //
+    std::vector<std::pair<std::uint16_t,std::uint8_t>> m_playerItemList;
     
 };
 

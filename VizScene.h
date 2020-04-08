@@ -45,6 +45,8 @@ private:
     
     //玩家数据
     VizPlayer m_mainPlayer;
+    int m_playerPosX_local;
+    int m_playerPosY_local;
     
     //按键响应
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);

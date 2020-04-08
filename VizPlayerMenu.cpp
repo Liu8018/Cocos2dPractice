@@ -92,7 +92,7 @@ void VizPlayerMenu::loadBackpackUI()
     //物品详情区
     auto itemInfo = ui::ImageView::create(g_img_panel1);
     m_subMenu_backpack->addChild(itemInfo,0,"itemInfoBg");
-    itemInfo->setPosition(Vec2(30,80)+itemInfo->getContentSize()/2);
+    itemInfo->setPosition(Vec2(30,140)+itemInfo->getContentSize()/2);
     
     //"使用"按钮
     auto itemUseButton = ui::Button::create();
@@ -100,7 +100,7 @@ void VizPlayerMenu::loadBackpackUI()
     itemUseButton->loadTextures(g_icon_greenButton1,g_icon_greenButton1Sel);
     itemUseButton->setTitleText("use");
     itemUseButton->setTitleFontSize(18);
-    itemUseButton->setPosition(Vec2(40,25)+itemUseButton->getContentSize()/2);
+    itemUseButton->setPosition(Vec2(37,77)+itemUseButton->getContentSize()/2);
     
     //"丢弃"按钮
     auto itemDropButton = ui::Button::create();
@@ -108,7 +108,7 @@ void VizPlayerMenu::loadBackpackUI()
     itemDropButton->loadTextures(g_icon_greenButton1,g_icon_greenButton1Sel);
     itemDropButton->setTitleText("drop");
     itemDropButton->setTitleFontSize(18);
-    itemDropButton->setPosition(Vec2(175,25)+itemDropButton->getContentSize()/2);
+    itemDropButton->setPosition(Vec2(176,77)+itemDropButton->getContentSize()/2);
     itemDropButton->addClickEventListener(CC_CALLBACK_1(VizPlayerMenu::itemDropClicked, this));
     
     //物品展示区
@@ -216,12 +216,15 @@ void VizPlayerMenu::showBackpackUI(cocos2d::Ref *)
     
     //
     m_playerItemList.clear();
-    g_world->getMainPlayerBackpack(m_playerItemList);
+    g_world->getPlayerBackpack(0,m_playerItemList);
     
     m_maxPageId = m_playerItemList.size()/24;
     
     //
     updateItemBoxes();
+    
+    if(m_playerItemList.empty())
+        return;
     
     //在左侧显示背包第一个物品信息
     itemBoxClicked(m_subMenu_backpack->getChildByTag(0));
@@ -229,18 +232,29 @@ void VizPlayerMenu::showBackpackUI(cocos2d::Ref *)
 
 void VizPlayerMenu::updateItemBoxes()
 {
-    log("curPageId:%d",m_curPageId);
-    log("maxPageId:%d",m_maxPageId);
     for(int i=0;i<24;i++){
         int itemId = m_curPageId*24+i;
         if(itemId < m_playerItemList.size()){
             auto itemBox = (ui::Button*)m_subMenu_backpack->getChildByTag(i);
             itemBox->setTitleText(std::to_string(m_playerItemList[itemId].first));
+            
+            auto sp = Sprite::createWithSpriteFrame(g_vizItem->getItemFrame(m_playerItemList[itemId].first));
+            float longSide = std::max(sp->getSpriteFrame()->getRect().size.width,
+                                      sp->getSpriteFrame()->getRect().size.height);
+            float scaleRatio = 34/longSide;
+            sp->setScale(scaleRatio);
+            sp->setPosition(Vec2(22,26));
+            
+            if(itemBox->getChildByTag(0) != nullptr)
+                itemBox->removeChildByTag(0);
+            itemBox->addChild(sp,0,0);
         }
         else{
             //清除掉这些box的内容
             auto itemBox = (ui::Button*)m_subMenu_backpack->getChildByTag(i);
             itemBox->setTitleText("");
+            
+            itemBox->removeChildByTag(0);
         }
     }
 }
@@ -264,7 +278,7 @@ void VizPlayerMenu::itemBoxClicked(cocos2d::Ref *pSender)
     //点到无物品的栏则返回
     int itemBoxTag = cItemBox->getTag();
     int callItemId = itemBoxTag + m_curPageId*24;
-    if(callItemId > m_playerItemList.size()-1)
+    if(callItemId > int(m_playerItemList.size())-1)
         return;
     
     m_curItemId = callItemId;
@@ -283,7 +297,44 @@ void VizPlayerMenu::itemBoxClicked(cocos2d::Ref *pSender)
 
 void VizPlayerMenu::itemDropClicked(cocos2d::Ref*)
 {
+    if(m_curItemId < 0)
+        return;
+    
+    //map上放置物品
     g_vizScene->placeItem(m_playerItemList[m_curItemId]);
+    
+    //删除背包里的物品信息
+    std::uint8_t* p_itemNum = &(m_playerItemList[m_curItemId].second);
+    *p_itemNum -= 1;
+    if(*p_itemNum < 1)
+        m_playerItemList.erase(m_playerItemList.begin()+m_curItemId);
+    
+    //更新world信息
+    g_world->dropItem(0,m_curItemId,1);
+    
+    //处理删除物品后本页为空的情况
+    if(m_curItemId > int(m_playerItemList.size())-1){
+        m_curItemId--;
+        
+        if(!m_playerItemList.empty())
+            itemBoxClicked(m_subMenu_backpack->getChildByTag(m_curItemId%24));
+        
+        if(m_curPageId*24 > m_curItemId && m_curPageId>0){
+            m_curPageId--;
+            m_maxPageId--;
+            itemBoxClicked(m_subMenu_backpack->getChildByTag(23));
+        }
+    }
+    
+    m_maxPageId = (int(m_playerItemList.size())-1)/24;
+    
+    //
+    updateItemBoxes();
+    loadItemInfoUI();
+    
+    //
+    if(m_curItemId < 0)
+        ((ui::Button*)m_subMenu_backpack->getChildByTag(0))->setEnabled(true);
 }
 
 void VizPlayerMenu::loadItemInfoUI()
@@ -291,6 +342,10 @@ void VizPlayerMenu::loadItemInfoUI()
     if(m_curItemSprite != nullptr){
         m_subMenu_backpack->removeChild(m_curItemSprite,true);
     }
+    
+    if(m_curItemId < 0)
+        return;
+    
     m_curItemSprite = Sprite::createWithSpriteFrame(
                 g_vizItem->getItemFrame(m_playerItemList[m_curItemId].first));
     m_subMenu_backpack->addChild(m_curItemSprite);
