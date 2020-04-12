@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "MapGenerator.h"
+
 class World
 {
 public:
@@ -30,6 +32,9 @@ private:
     
     //全地图的item信息
     unsigned char* m_itemMap;
+    
+    //
+    MapGenerator m_mapGener;
     
     //
     std::vector<std::pair<std::uint16_t,std::uint8_t>> m_playerItemList;
