@@ -3,14 +3,39 @@
 
 #include <string>
 #include <vector>
-#include <queue>
+
+class MapCache
+{
+public:
+    MapCache();
+    
+    void push(const std::pair<int,int>& blockId,
+              const std::vector<std::vector<int>>& naturalMapBlock,
+              const std::vector<std::vector<std::vector<std::pair<uint16_t, uint8_t>>>> &itemMapBlock);
+    
+    bool get(const std::pair<int,int>& blockId,
+             std::vector<std::vector<int>>& naturalMapBlock,
+             std::vector<std::vector<std::vector<std::pair<uint16_t,uint8_t>>>>& itemMapBlock);
+    
+private:
+    int m_size;
+    int m_maxSize;
+    
+    struct mapCacheList{
+        std::pair<int,int> blockId;
+        int naturalMapBlock[100][100];
+        std::pair<uint16_t, uint8_t> itemMapBlock[100][100][5];
+        
+        mapCacheList* next;
+    };
+    
+    mapCacheList* m_first;
+};
 
 class MapGenerator
 {
 public:
     MapGenerator();
-    
-    void setRandomSeed(unsigned int);
     
     void generate(int x, int y, int halfW, int halfH,
                   std::string &naturalMapTmx,
@@ -25,22 +50,28 @@ private:
     void mySrand(unsigned int);
     unsigned int myRand();
     
+    //地图尺寸信息
+    int m_wholeSize;
+    int m_fan_radius;
+    int m_fan2xiu_w;
+    
     //区块大小
     int m_blockSize;
     //perlin噪声参考单位
-    int m_perlinK;
+    int m_perlinK_fan;
+    int m_perlinK_xiu;
     
     //地图缓存
-    std::queue<std::pair<int,int>> m_mapCacheCoord;
-    std::queue< std::vector<std::vector<std::vector<int>>> > m_naturalMapCache;
-    std::queue< std::vector<std::vector<std::vector<int>>> > m_itemMapCache;
+    MapCache m_mapCache;
     
     //柏林噪声
     float PerlinNoise2d(int randomSeed, float x, float y);
     
     //生成自然部分（不可更改地图）
-    void genNaturalMap(int startX, int startY, int endX, int endY,
-                       std::vector<std::vector<int>>&);
+    void genNaturalMap(int blockX, int blockY, std::vector<std::vector<int>>&);
+    void naturalMap2Tmx(const std::vector<std::vector<int> > &naturalMap, std::string &tmx);
+    void naturalMapBeautify(int startX, int startY,
+                            std::vector<std::vector<int> > &naturalMap);
 };
 
 #endif // MAPGENERATOR_H

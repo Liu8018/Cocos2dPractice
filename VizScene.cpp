@@ -139,7 +139,7 @@ void VizScene::MoveMap(int dX, int dY)
     })), nullptr));
     
     //更新world
-    m_world.playerMove(0,-dX,dY);
+    m_world.playerMove(0,-dX,-dY);
     
     //更改人物与map的相对坐标
     m_playerPosX_local += -dX;

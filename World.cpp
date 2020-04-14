@@ -1,4 +1,5 @@
 #include "World.h"
+#include "globals.h"
 
 #include <fstream>
 #include <sstream>
@@ -21,13 +22,10 @@ void getLimitIndex(int limitW, int limitH, int infX, int infY, int &limitX, int 
 World::World()
 {
     //全地图大小，及人物初始位置
-    m_w = 100000;
-    m_h = 100000;
-    m_playerPosX = m_w/2;
-    m_playerPosY = m_h/2;
-    
-    //设置地图生成器的随机种子
-    m_mapGener.setRandomSeed(42);
+    m_w = g_mapWholeSize;
+    m_h = g_mapWholeSize;
+    m_playerPosX = 40000;
+    m_playerPosY = 50000;
     
     //test
     m_playerItemList.push_back(std::make_pair(0,1));
@@ -73,6 +71,9 @@ void World::playerMove(int playerId, int dX, int dY)
     getLimitIndex(m_w,m_h,m_playerPosX,m_playerPosY,limitX,limitY);
     m_playerPosX = limitX;
     m_playerPosY = limitY;
+    
+    //debug 输出当前坐标
+    std::cout<<"current position: "<<m_playerPosX<<","<<m_playerPosY<<std::endl;
 }
 
 std::string World::getLocalMapTmx(int halfW, int halfH)

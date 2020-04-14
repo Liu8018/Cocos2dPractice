@@ -1,5 +1,9 @@
 #include "globals.h"
 
+//
+int g_mapWholeSize = 100000;
+
+//
 std::string g_icon_backpack = "menu/backpack.png";
 std::string g_icon_backpackSel = "menu/backpack_selected.png";
 std::string g_icon_blueButton1 = "menu/BlueButton1.png";

@@ -3,6 +3,9 @@
 
 #include "cocos2d.h"
 
+//
+extern int g_mapWholeSize;
+
 //一些游戏资源路径
 extern std::string g_icon_backpack;
 extern std::string g_icon_backpackSel;
