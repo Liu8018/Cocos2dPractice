@@ -23,8 +23,8 @@ private:
     
     struct mapCacheList{
         std::pair<int,int> blockId;
-        int naturalMapBlock[100][100];
-        std::pair<uint16_t, uint8_t> itemMapBlock[100][100][5];
+        int naturalMapBlock[200][200];
+        std::pair<uint16_t, uint8_t> itemMapBlock[200][200][5];
         
         mapCacheList* next;
     };

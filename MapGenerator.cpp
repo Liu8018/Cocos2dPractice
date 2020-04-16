@@ -65,20 +65,20 @@ bool MapCache::get(const std::pair<int, int> &blockId,
         if(cptr->blockId.first == blockId.first &&
            cptr->blockId.second == blockId.second)
         {
-            naturalMapBlock.resize(100);
-            itemMapBlock.resize(100);
-            for(int i=0;i<100;i++){
-                naturalMapBlock[i].resize(100);
-                itemMapBlock[i].resize(100);
+            naturalMapBlock.resize(200);
+            itemMapBlock.resize(200);
+            for(int i=0;i<200;i++){
+                naturalMapBlock[i].resize(200);
+                itemMapBlock[i].resize(200);
             }
-            for(int i=0;i<100;i++){
-                for(int j=0;j<100;j++){
+            for(int i=0;i<200;i++){
+                for(int j=0;j<200;j++){
                     itemMapBlock[i][j].resize(5);
                 }
             }
             
-            for(int y=0;y<100;y++){
-                for(int x=0;x<100;x++){
+            for(int y=0;y<200;y++){
+                for(int x=0;x<200;x++){
                     naturalMapBlock[y][x] = cptr->naturalMapBlock[y][x];
                     
                     for(int z=0;z<5;z++)
@@ -105,7 +105,7 @@ MapGenerator::MapGenerator()
     
     m_randomSeed = 123;
     
-    m_blockSize = 100;//不能乱改，跟缓存相关的
+    m_blockSize = 200;//不能乱改，跟缓存相关的
     m_perlinK_fan = 20;
     m_perlinK_xiu = 2000;
 }
@@ -285,7 +285,24 @@ void MapGenerator::genNaturalMap(int blockX, int blockY,
             }
             //在fan-xiu交界
             else if(cDist < f2xRadiusPow2){
-                atlasLine.push_back(0);
+                float xf = x/float(m_perlinK_fan);
+                float yf = y/float(m_perlinK_fan);
+                float noise = PerlinNoise2d(m_randomSeed,xf,yf);
+                
+                noise -= (cDist - fanRadiusPow2)/float(m_fan2xiu_w*m_fan2xiu_w);
+                
+                //水
+                if(noise < waterLine)
+                    atlasLine.push_back(0);
+                //沙
+                else if(noise < sandLine)
+                    atlasLine.push_back(64);
+                //土
+                else if(noise < grasslandLine)
+                    atlasLine.push_back(128);
+                //草
+                else
+                    atlasLine.push_back(192);
             }
             //在xiu
             else{
